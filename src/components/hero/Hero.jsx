@@ -39,7 +39,7 @@ export default function Hero() {
 
             {
               data.map((row, index) => {
-                console.log(row);
+                return <p>{JSON.stringify(row)}</p>
               })
             }
 
