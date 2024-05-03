@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Dialog } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import './Hero.css';
 import Papa from 'papaparse';
 import Data from './../../db/mirn-exact.csv';
+
+import {
+  HStack,
+  VStack,
+  Button
+} from "@chakra-ui/react";
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -14,6 +19,8 @@ const navigation = [
 export default function Hero() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [data, setData] = useState([]);
+  const [results, setResults] = useState([]);
+  const [searchText, setSearchText] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(Data);
@@ -28,7 +35,23 @@ export default function Hero() {
       setData(parsedData);
     };
     fetchData();
-  }, [])
+  }, []);
+
+  const searchHandle = (e) => {
+    document.getElementById('searchingmsg').style = 'display:block !important';
+    document.getElementById('results').style = 'display:none !important';
+    if(searchText != ''){
+      data.map((row, index) => {
+        setTimeout(500);
+        console.log(row.MIRN);
+        if(row.MIRN == searchText){
+          document.getElementById('searchingmsg').style = 'display:none !important';
+          document.getElementById('results').style = 'display:block !important';
+          setResults(row);
+        }
+      })
+    }
+  }; 
 
   return (
     <div className="bg-white">
@@ -36,12 +59,6 @@ export default function Hero() {
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl py-20 sm:py-15 lg:py-20">
           <div className="text-center">
-
-            {
-              data.map((row, index) => {
-                return <p>{JSON.stringify(row)}</p>
-              })
-            }
 
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
               Data to enrich your online business
@@ -55,13 +72,55 @@ export default function Hero() {
             </div>
             <div className="sm:col-span-4">
               <div className="mt-2">
-                <input
-                  id="search"
-                  name="text"
-                  type="text"
-                  autoComplete="text"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                <HStack spacing='24px'>
+                  <input
+                    id="search"
+                    name="text"
+                    value={searchText}
+                    onChange = {e => setSearchText(e.target.value)}
+                    type="text"
+                    placeholder='Search by MIRN'
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                  <Button onClick={searchHandle} colorScheme='blue'>Search</Button>
+                </HStack>
+              </div>
+            </div>
+            <div className="sm:col-span-4">
+              <div id='results' className="mt-2">
+                <p>MIRN : {results.MIRN}</p>
+                <p>MIRNCHECKSUM : {results.MIRNCHECKSUM}</p>
+                <p>FLATORUNITTYPE : {results.FLATORUNITTYPE}</p>
+                <p>FLATORUNITNUMBER : {results.FLATORUNITNUMBER}</p>
+                <p>FLOORORLEVELTYPE : {results.FLOORORLEVELTYPE}</p>
+                <p>FLOORORLEVELNUMBER : {results.FLOORORLEVELNUMBER}</p>
+                <p>BUILDINGORPROPERTYNAME1 : {results.BUILDINGORPROPERTYNAME1}</p>
+                <p>BUILDINGORPROPERTYNAME2 : {results.BUILDINGORPROPERTYNAME2}</p>
+                <p>LOCATIONDESCRIPTOR : {results.LOCATIONDESCRIPTOR}</p>
+                <p>HOUSENUMBER : {results.HOUSENUMBER}</p>
+                <p>HOUSENUMBERSUFFIX : {results.HOUSENUMBERSUFFIX}</p>
+                <p>LOTNUMBER : {results.LOTNUMBER}</p>
+                <p>STREETNAME : {results.STREETNAME}</p>
+                <p>STREETTYPE : {results.STREETTYPE}</p>
+                <p>STREETSUFFIX : {results.STREETSUFFIX}</p>
+                <p>SITEADDRESSCITY : {results.SITEADDRESSCITY}</p>
+                <p>SITEADDRESSSTATE : {results.SITEADDRESSSTATE}</p>
+                <p>SITEADDRESSPOSTCODE : {results.SITEADDRESSPOSTCODE}</p>
+                <p>SITEADDRESSDPID : {results.SITEADDRESSDPID}</p>
+                <p>GASMETERNUMBER : {results.GASMETERNUMBER}</p>
+                <p>SOURCEFILEID : {results.SOURCEFILEID}</p>
+                <p>CLAIMED : {results.CLAIMED}</p>
+                <p>NSRD : {results.NSRD}</p>
+                <p>METERTYPE : {results.METERTYPE}</p>
+                <p>MIRNSTATUS : {results.MIRNSTATUS}</p>
+                <p>NETWORKID : {results.NETWORKID}</p>
+                <p>SN : {results.SN}</p>
+              </div>
+              <div id='searchingmsg' className="mt-2">
+                <p>Searching...........</p>
+              </div>
+              <div id='notfoundmsg' className="mt-2">
+                <p>MIRN Data not found!</p>
               </div>
             </div>
           </div>
