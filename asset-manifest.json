@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/mirn/static/css/main.87ae1c4c.css",
-    "main.js": "/mirn/static/js/main.230ae724.js",
+    "main.js": "/mirn/static/js/main.0af6d10b.js",
     "static/js/453.7d75afe1.chunk.js": "/mirn/static/js/453.7d75afe1.chunk.js",
     "index.html": "/mirn/index.html",
     "main.87ae1c4c.css.map": "/mirn/static/css/main.87ae1c4c.css.map",
-    "main.230ae724.js.map": "/mirn/static/js/main.230ae724.js.map",
+    "main.0af6d10b.js.map": "/mirn/static/js/main.0af6d10b.js.map",
     "453.7d75afe1.chunk.js.map": "/mirn/static/js/453.7d75afe1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.87ae1c4c.css",
-    "static/js/main.230ae724.js"
+    "static/js/main.0af6d10b.js"
   ]
 }
