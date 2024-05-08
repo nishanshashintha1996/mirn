@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import './Hero.css';
-import Papa from 'papaparse';
-import Data from './../../db/mirn-exact.csv';
 
 import {
   HStack,
@@ -17,40 +15,22 @@ const navigation = [
 ]
 
 export default function Hero() {
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [data, setData] = useState([]);
   const [results, setResults] = useState([]);
   const [searchText, setSearchText] = useState([]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(Data);
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder('utf-8');
-      const csvData = decoder.decode(result.value);
-      const parsedData = Papa.parse(csvData, {
-        header:true,
-        skipEmptyLines:true
-      }).data;
-      setData(parsedData);
-    };
-    fetchData();
+      //console.log(data);
   }, []);
 
   const searchHandle = (e) => {
-    document.getElementById('searchingmsg').style = 'display:block !important';
-    document.getElementById('results').style = 'display:none !important';
-    if(searchText != ''){
-      data.map((row, index) => {
-        setTimeout(500);
-        console.log(row.MIRN);
-        if(row.MIRN == searchText){
-          document.getElementById('searchingmsg').style = 'display:none !important';
-          document.getElementById('results').style = 'display:block !important';
-          setResults(row);
-        }
-      })
-    }
+    fetch(`https://mirn-backend.onrender.com/api/view/${searchText}`)
+      .then(response => response.json())
+      .then(json => setResults(json))
+      .catch(error => console.error(error));
+      console.log(results);
   }; 
 
   return (
@@ -88,33 +68,33 @@ export default function Hero() {
             </div>
             <div className="sm:col-span-4">
               <div id='results' className="mt-2">
-                <p>MIRN : {results.MIRN}</p>
-                <p>MIRNCHECKSUM : {results.MIRNCHECKSUM}</p>
-                <p>FLATORUNITTYPE : {results.FLATORUNITTYPE}</p>
-                <p>FLATORUNITNUMBER : {results.FLATORUNITNUMBER}</p>
-                <p>FLOORORLEVELTYPE : {results.FLOORORLEVELTYPE}</p>
-                <p>FLOORORLEVELNUMBER : {results.FLOORORLEVELNUMBER}</p>
-                <p>BUILDINGORPROPERTYNAME1 : {results.BUILDINGORPROPERTYNAME1}</p>
-                <p>BUILDINGORPROPERTYNAME2 : {results.BUILDINGORPROPERTYNAME2}</p>
-                <p>LOCATIONDESCRIPTOR : {results.LOCATIONDESCRIPTOR}</p>
-                <p>HOUSENUMBER : {results.HOUSENUMBER}</p>
-                <p>HOUSENUMBERSUFFIX : {results.HOUSENUMBERSUFFIX}</p>
-                <p>LOTNUMBER : {results.LOTNUMBER}</p>
-                <p>STREETNAME : {results.STREETNAME}</p>
-                <p>STREETTYPE : {results.STREETTYPE}</p>
-                <p>STREETSUFFIX : {results.STREETSUFFIX}</p>
-                <p>SITEADDRESSCITY : {results.SITEADDRESSCITY}</p>
-                <p>SITEADDRESSSTATE : {results.SITEADDRESSSTATE}</p>
-                <p>SITEADDRESSPOSTCODE : {results.SITEADDRESSPOSTCODE}</p>
-                <p>SITEADDRESSDPID : {results.SITEADDRESSDPID}</p>
-                <p>GASMETERNUMBER : {results.GASMETERNUMBER}</p>
-                <p>SOURCEFILEID : {results.SOURCEFILEID}</p>
-                <p>CLAIMED : {results.CLAIMED}</p>
-                <p>NSRD : {results.NSRD}</p>
-                <p>METERTYPE : {results.METERTYPE}</p>
-                <p>MIRNSTATUS : {results.MIRNSTATUS}</p>
-                <p>NETWORKID : {results.NETWORKID}</p>
-                <p>SN : {results.SN}</p>
+                <p>MIRN : <span>{results.mirn}</span></p>
+                <p>MIRNCHECKSUM : <span>{results.mirnchecksum}</span></p>
+                <p>FLATORUNITTYPE : <span>{results.flatorunittype}</span></p>
+                <p>FLATORUNITNUMBER : <span>{results.flatorunitnumber}</span></p>
+                <p>FLOORORLEVELTYPE : <span>{results.floororleveltype}</span></p>
+                <p>FLOORORLEVELNUMBER : <span>{results.floororlevelnumber}</span></p>
+                <p>BUILDINGORPROPERTYNAME1 : <span>{results.buildingorpropertyname1}</span></p>
+                <p>BUILDINGORPROPERTYNAME2 : <span>{results.buildingorpropertyname2}</span></p>
+                <p>LOCATIONDESCRIPTOR : <span>{results.locationdescriptor}</span></p>
+                <p>HOUSENUMBER : <span>{results.housenumber}</span></p>
+                <p>HOUSENUMBERSUFFIX : <span>{results.housenumbersuffix}</span></p>
+                <p>LOTNUMBER : <span>{results.lotnumber}</span></p>
+                <p>STREETNAME : {results.streetname}</p>
+                <p>STREETTYPE : {results.streettype}</p>
+                <p>STREETSUFFIX : {results.streetsuffix}</p>
+                <p>SITEADDRESSCITY : {results.siteaddresscity}</p>
+                <p>SITEADDRESSSTATE : {results.siteaddressstate}</p>
+                <p>SITEADDRESSPOSTCODE : {results.siteaddresspostcode}</p>
+                <p>SITEADDRESSDPID : {results.siteaddressdpid}</p>
+                <p>GASMETERNUMBER : {results.gasmeternumber}</p>
+                <p>SOURCEFILEID : {results.sourcefileid}</p>
+                <p>CLAIMED : {results.claimed}</p>
+                <p>NSRD : {results.nsrd}</p>
+                <p>METERTYPE : {results.metertype}</p>
+                <p>MIRNSTATUS : {results.mirnstatus}</p>
+                <p>NETWORKID : {results.networkid}</p>
+                <p>SN : {results.sn}</p>
               </div>
               <div id='searchingmsg' className="mt-2">
                 <p>Searching...........</p>

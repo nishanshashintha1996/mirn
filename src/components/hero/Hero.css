@@ -19,7 +19,6 @@
     background-color: rgb(235, 235, 235);
     padding:20px;
     border-radius: 10px;
-    display: none;
 }
 #searchingmsg{
     margin: 15px 0px;
@@ -36,4 +35,11 @@
     border-radius: 10px;
     color: white;
     display: none;
+}
+#results p{
+    text-align: left;
+    font-weight: 700;
+}
+#results span{
+    font-weight: 400;
 }
