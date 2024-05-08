@@ -80,21 +80,21 @@ export default function Hero() {
                 <p>HOUSENUMBER : <span>{results.housenumber}</span></p>
                 <p>HOUSENUMBERSUFFIX : <span>{results.housenumbersuffix}</span></p>
                 <p>LOTNUMBER : <span>{results.lotnumber}</span></p>
-                <p>STREETNAME : {results.streetname}</p>
-                <p>STREETTYPE : {results.streettype}</p>
-                <p>STREETSUFFIX : {results.streetsuffix}</p>
-                <p>SITEADDRESSCITY : {results.siteaddresscity}</p>
-                <p>SITEADDRESSSTATE : {results.siteaddressstate}</p>
-                <p>SITEADDRESSPOSTCODE : {results.siteaddresspostcode}</p>
-                <p>SITEADDRESSDPID : {results.siteaddressdpid}</p>
-                <p>GASMETERNUMBER : {results.gasmeternumber}</p>
-                <p>SOURCEFILEID : {results.sourcefileid}</p>
-                <p>CLAIMED : {results.claimed}</p>
-                <p>NSRD : {results.nsrd}</p>
-                <p>METERTYPE : {results.metertype}</p>
-                <p>MIRNSTATUS : {results.mirnstatus}</p>
-                <p>NETWORKID : {results.networkid}</p>
-                <p>SN : {results.sn}</p>
+                <p>STREETNAME : <span>{results.streetname}</span></p>
+                <p>STREETTYPE : <span>{results.streettype}</span></p>
+                <p>STREETSUFFIX : <span>{results.streetsuffix}</span></p>
+                <p>SITEADDRESSCITY : <span>{results.siteaddresscity}</span></p>
+                <p>SITEADDRESSSTATE : <span>{results.siteaddressstate}</span></p>
+                <p>SITEADDRESSPOSTCODE : <span>{results.siteaddresspostcode}</span></p>
+                <p>SITEADDRESSDPID : <span>{results.siteaddressdpid}</span></p>
+                <p>GASMETERNUMBER : <span>{results.gasmeternumber}</span></p>
+                <p>SOURCEFILEID : <span>{results.sourcefileid}</span></p>
+                <p>CLAIMED : <span>{results.claimed}</span></p>
+                <p>NSRD : <span>{results.nsrd}</span></p>
+                <p>METERTYPE : <span>{results.metertype}</span></p>
+                <p>MIRNSTATUS : <span>{results.mirnstatus}</span></p>
+                <p>NETWORKID : <span>{results.networkid}</span></p>
+                <p>SN : <span>{results.sn}</span></p>
               </div>
               <div id='searchingmsg' className="mt-2">
                 <p>Searching...........</p>
