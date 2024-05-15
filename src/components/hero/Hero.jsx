@@ -21,12 +21,29 @@ export default function Hero() {
   const [results, setResults] = useState([]);
   const [searchText, setSearchText] = useState([]);
 
+  const [streetAddress, setStreetAddress] = useState([]);
+  const [city, setCity] = useState([]);
+  const [state, setState] = useState([]);
+  const [postal, setPostal] = useState([]);
+
   useEffect(() => {
       //console.log(data);
   }, []);
 
   const searchHandle = (e) => {
-    fetch(`https://mirn-backend.onrender.com/api/view/${searchText}`)
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        streetAddress:streetAddress,
+        city:city,
+        state:state,
+        postal:postal 
+      })
+    };
+
+    fetch(`https://mirn-backend.onrender.com/api/searchaddress`, requestOptions)
       .then(response => response.json())
       .then(json => setResults(json))
       .catch(error => console.error(error));
@@ -51,50 +68,85 @@ export default function Hero() {
               
             </div>
             <div className="sm:col-span-4">
-              <div className="mt-2">
-                <HStack spacing='24px'>
+
+              <div className="col-span-full">
+                <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
+                  Street address
+                </label>
+                <div className="mt-2">
                   <input
-                    id="search"
-                    name="text"
-                    value={searchText}
-                    onChange = {e => setSearchText(e.target.value)}
                     type="text"
-                    placeholder='Search by MIRN'
+                    name="street-address"
+                    id="street-address"
+                    value={streetAddress}
+                    onChange = {e => setStreetAddress(e.target.value)}
+                    autoComplete="street-address"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                </div>
+              </div>
+
+              <div className="sm:col-span-2 sm:col-start-1">
+                <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
+                  City
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="city"
+                    id="city"
+                    value={city}
+                    onChange = {e => setCity(e.target.value)}
+                    autoComplete="address-level2"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
+                  State / Province
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="region"
+                    id="region"
+                    value={state}
+                    onChange = {e => setState(e.target.value)}
+                    autoComplete="address-level1"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-2">
+                <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
+                  ZIP / Postal code
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    name="postal-code"
+                    id="postal-code"
+                    value={postal}
+                    onChange = {e => setPostal(e.target.value)}
+                    autoComplete="postal-code"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <HStack spacing='24px'>
                   <Button onClick={searchHandle} colorScheme='blue'>Search</Button>
                 </HStack>
               </div>
+
             </div>
             <div className="sm:col-span-4">
               <div id='results' className="mt-2">
                 <p>MIRN : <span>{results.mirn}</span></p>
-                <p>MIRNCHECKSUM : <span>{results.mirnchecksum}</span></p>
-                <p>FLATORUNITTYPE : <span>{results.flatorunittype}</span></p>
-                <p>FLATORUNITNUMBER : <span>{results.flatorunitnumber}</span></p>
-                <p>FLOORORLEVELTYPE : <span>{results.floororleveltype}</span></p>
-                <p>FLOORORLEVELNUMBER : <span>{results.floororlevelnumber}</span></p>
-                <p>BUILDINGORPROPERTYNAME1 : <span>{results.buildingorpropertyname1}</span></p>
-                <p>BUILDINGORPROPERTYNAME2 : <span>{results.buildingorpropertyname2}</span></p>
-                <p>LOCATIONDESCRIPTOR : <span>{results.locationdescriptor}</span></p>
-                <p>HOUSENUMBER : <span>{results.housenumber}</span></p>
-                <p>HOUSENUMBERSUFFIX : <span>{results.housenumbersuffix}</span></p>
-                <p>LOTNUMBER : <span>{results.lotnumber}</span></p>
-                <p>STREETNAME : <span>{results.streetname}</span></p>
-                <p>STREETTYPE : <span>{results.streettype}</span></p>
-                <p>STREETSUFFIX : <span>{results.streetsuffix}</span></p>
-                <p>SITEADDRESSCITY : <span>{results.siteaddresscity}</span></p>
-                <p>SITEADDRESSSTATE : <span>{results.siteaddressstate}</span></p>
-                <p>SITEADDRESSPOSTCODE : <span>{results.siteaddresspostcode}</span></p>
-                <p>SITEADDRESSDPID : <span>{results.siteaddressdpid}</span></p>
-                <p>GASMETERNUMBER : <span>{results.gasmeternumber}</span></p>
-                <p>SOURCEFILEID : <span>{results.sourcefileid}</span></p>
-                <p>CLAIMED : <span>{results.claimed}</span></p>
-                <p>NSRD : <span>{results.nsrd}</span></p>
-                <p>METERTYPE : <span>{results.metertype}</span></p>
-                <p>MIRNSTATUS : <span>{results.mirnstatus}</span></p>
-                <p>NETWORKID : <span>{results.networkid}</span></p>
-                <p>SN : <span>{results.sn}</span></p>
               </div>
               <div id='searchingmsg' className="mt-2">
                 <p>Searching...........</p>
