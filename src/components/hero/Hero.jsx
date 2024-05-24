@@ -19,6 +19,7 @@ export default function Hero() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [data, setData] = useState([]);
   const [results, setResults] = useState([]);
+  const [foundResults, setFoundResults] = useState(['']);
   const [searchText, setSearchText] = useState([]);
 
   const [streetAddress, setStreetAddress] = useState([]);
@@ -28,7 +29,7 @@ export default function Hero() {
   const [houseNumber, setHouseNumber] = useState([]);
 
   useEffect(() => {
-      //console.log(data);
+    
   }, []);
 
   const searchHandle = (e) => {
@@ -37,11 +38,10 @@ export default function Hero() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        streetAddress:streetAddress,
+        street:streetAddress,
         city:city,
         state:state,
-        postal:postal,
-        houseNumber:houseNumber
+        postal:postal
       })
     };
 
@@ -49,8 +49,21 @@ export default function Hero() {
       .then(response => response.json())
       .then(json => setResults(json))
       .catch(error => console.error(error));
-      console.log(results);
+      //console.log(results);
+
+      
+      for (var i = 0; i < results.length; i++){
+        // console.log(results[i].housenumber);
+        if (results[i].housenumber == houseNumber){
+          setFoundResults(results[i].mirn);
+          break;
+        }else{
+          setFoundResults('not found!');
+        }
+      }
   }; 
+
+  
 
   return (
     <div className="bg-white">
@@ -73,7 +86,7 @@ export default function Hero() {
 
               <div className="col-span-full">
                 <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
-                  Street address
+                  Street
                 </label>
                 <div className="mt-2">
                   <input
@@ -165,7 +178,11 @@ export default function Hero() {
             </div>
             <div className="sm:col-span-4">
               <div id='results' className="mt-2">
-                <p>MIRN : <span>{results.mirn}</span></p>
+                <p>MIRN : <span>
+                {
+                  foundResults
+                }
+                </span></p>
               </div>
               <div id='searchingmsg' className="mt-2">
                 <p>Searching...........</p>
