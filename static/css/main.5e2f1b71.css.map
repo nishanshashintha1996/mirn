@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/main.5e2f1b71.css","mappings":"AAAA,KACE,kCACF,CACA,cACE,8BAAyC,CACzC,UACF","sources":["index.css"],"sourcesContent":["body {\n  background-color: rgb(8, 5, 19) !important;\n}\nselect option {\n  background: rgba(0, 0, 0, 0.3) !important;\n  color: #000000;\n}"],"names":[],"sourceRoot":""}
