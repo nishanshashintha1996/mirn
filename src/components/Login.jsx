@@ -25,7 +25,7 @@ export default function Login( { setIsAuthenticated } ) {
     const toast = useToast();
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(email=='nishanshashintha.live@gmail.com' && password =='a'){
+        if(email=='nishanshashintha.live@gmail.com' && password =='live@1234'){
             setIsAuthenticated(true);
             navigate('/');
         }else{
