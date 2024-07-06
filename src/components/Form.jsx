@@ -8,13 +8,59 @@ import {
     Box,
     Select,
     Button,
-    Spinner 
+    Spinner,
+    Flex,
+    Switch,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure,
+    Center,
+    Table,
+    Thead,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    TableContainer,
 } from '@chakra-ui/react';
+import DataTable from './DataTable';
 
-  export default function Form() {
+import {
+    AutoComplete,
+    AutoCompleteInput,
+    AutoCompleteItem,
+    AutoCompleteList,
+} from "@choc-ui/chakra-autocomplete";
 
-    const numbers = [1, 2, 3, 4, 5];
+export default function Form() {
 
+    const [results, setResults] = useState([]);
+    const [uniqueCities, setUniqueCities] = useState([]);
+    const [uniqueStreets, setUniqueStreets] = useState([]);
+    const [uniqueStreetForMirn, setUniqueStreetsForMirn] = useState([]);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+
+    // HaveHouseNumber
+    const [notHaveHouseNumber, setNotHaveHouseNumber] = useState(false);
+    const handleHaveHouseNumber = (e) => {
+        setNotHaveHouseNumber(e.target.checked);
+        setResults([]);
+        setHouseNumber('');
+        setLotNumber('');
+        setMirn('');
+        setStreetName('');
+        setCity('');
+    }
+
+    // StateTerritory
     const [stateTerritory, setStateTerritory] = useState('');
     const [stateTerritoryAvailability, setStateTerritoryAvailability] = useState(false);
     const handleStateTerritory = (e) => {
@@ -24,147 +70,297 @@ import {
         }
     }
     const isStateTerritorySet = stateTerritory === '';
+    
+    // DataAvailability
+    const [dataAvailability, setDataAvailability] = useState(false);
 
+    // Postal
     const [postal, setPostal] = useState('');
-    const handlePostal = (e) => setPostal(e.target.value);
+    const handlePostal = (e) => {
+        setPostal(e.target.value);
+        setResults([]);
+        setHouseNumber('');
+        setLotNumber('');
+        setMirn('');
+        setStreetName('');
+        setCity('');
+    }
     const isPostalSet = postal === '';
 
+    // City
     const [city, setCity] = useState('');
     const handleCity = (e) => setCity(e.target.value);
     const isCitySet = city === '';
+    const handleCitySet = (value) => {
+        setCity(value);
+        const streetvals = results.filter(item =>
+            item.siteaddresscity.toLowerCase().includes(value.toLowerCase())
+        );
+        setUniqueStreets(streetvals);
+    }
 
-    const [steetName, setStreetName] = useState('');
-    const handleStreetName = (e) => setStreetName(e.target.value);
-    const isStreetName = steetName === '';
+    // StreetName
+    const [streetName, setStreetName] = useState('');
+    const handleStreetSet = (value) => {
+        setMirn(value.mirn);
+        setMirnSet(value);
+        onOpen();
+    }
+    const handleStreetName = (e) => {
+        setStreetName(e.target.value);
+    }
+    const isStreetName = streetName === '';
 
+    // Mirn
+    const [mirn, setMirn] = useState('');
+    const [mirnSet, setMirnSet] = useState([]);
+
+    // HouseNumber
     const [houseNumber, setHouseNumber] = useState('');
     const handleHouseNumber = (e) => {
+        setResults([]);
+        setCity('');
+        setMirn('');
         setHouseNumber(e.target.value);
-        searchHandle(e);
     }
     const isHouseNumberSet = houseNumber === '';
 
-    const [results, setResults] = useState([]);
-    const uniqueCities = Array.from(new Map(results.map(item => [item.siteaddresscity, item])).values());
-    const uniqueStreets = Array.from(new Map(results.map(item => [item.streetname, item])).values());
+    // LotNumber
+    const [lotNumber, setLotNumber] = useState('');
+    const handleLotNumber = (e) => {
+        setResults([]);
+        setCity('');
+        setMirn('');
+        setLotNumber(e.target.value);
+    }
+    const isLotNumberSet = lotNumber === '';
 
+    //use effects
+    useEffect(() => {
+        const acity = results
+            .map(item => item.siteaddresscity.toLowerCase())
+            .filter(cityName => cityName.includes(city.toLowerCase()));
+        const uniqueCitySet = new Set(acity);
+        setUniqueCities([...uniqueCitySet]);
+    }, [city]);
 
-    const searchHandle = async (e) => {
+    useEffect(() => {
+        const acity = uniqueStreets.filter(item =>
+            item.streetname.toLowerCase().includes(streetName.toLowerCase()));
+        const uniqueStreetSet = new Set(acity);
+        setUniqueStreetsForMirn([...uniqueStreetSet]);
+    }, [streetName]);
+
+    useEffect(() => {
+        setDataAvailability(true);
+    }, [houseNumber]);
+
+    
+
+    useEffect(() => {
+        // console.log(results)
+    }, [results]);
+
+    const checkDataAvailability = () => {
+        searchHandle();
+        setDataAvailability(false);
+    }
+
+    // JSON Request
+    const searchHandle = async () => {
+
+        let type = '';
+        let value = '';
+
+        if(notHaveHouseNumber){
+            type = 'lot';
+            value = lotNumber;
+        }else{
+            type = 'house';
+            value = houseNumber;
+        }
+
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            houseNumber:e.target.value,
+          body: JSON.stringify({
+            stype:type,
+            svalue:value,
             state:stateTerritory,
             postal:postal
           })
         };
-        await fetch(`http://localhost:8070/api/lv1`, requestOptions)
+
+        // https://mirn-backend.onrender.com/api/lv1
+        // http://localhost:8070/api/lv1
+        await fetch(`https://mirn-backend.onrender.com/api/lv1`, requestOptions)
             .then(response => response.json())
             .then(json => setResults(json))
             .catch(error => console.error(error));
-        console.log(results)
-        console.log('end')
+
     }; 
 
+
     return (
-        <Box w='100%' p={10} color='white'>
-            <form>
-                <FormControl isDisabled={stateTerritoryAvailability} isInvalid={isStateTerritorySet} padding={3}>
-                    <FormLabel>State / Territory</FormLabel>
-                    <Select value={stateTerritory} onChange={handleStateTerritory} placeholder='Select State / Territory'>
-                        <option value='NSW'>New South Wales</option>
-                        <option value='VIC'>Victoria</option>
-                        <option value='QLD'>Queensland</option>
-                        <option value='WA'>Western Australia</option>
-                        <option value='SA'>South Australia</option>
-                        <option value='TAS'>Tasmania</option>
-                        <option value='ACT'>Australian Capital Territory</option>
-                        <option value='NT'>Northern Territory</option>
-                        <option value='ACT'>Jervis Bay Territory</option>
-                    </Select>
+        <>
+            <Box w='100%' p={10} color='white'>
+                <form>
+                    <FormControl isInvalid={isStateTerritorySet} padding={3}>
+                        <FormLabel>State / Territory</FormLabel>
+                        <Select value={stateTerritory} onChange={handleStateTerritory} placeholder='Select State / Territory'>
+                            <option value='NSW'>New South Wales</option>
+                            <option value='VIC'>Victoria</option>
+                            <option value='QLD'>Queensland</option>
+                            <option value='WA'>Western Australia</option>
+                            <option value='SA'>South Australia</option>
+                            <option value='TAS'>Tasmania</option>
+                            <option value='ACT'>Australian Capital Territory</option>
+                            <option value='NT'>Northern Territory</option>
+                            <option value='ACT'>Jervis Bay Territory</option>
+                        </Select>
+                        { !isStateTerritorySet ? (
+                            <></>
+                        ) : (
+                            <FormErrorMessage>Please Select Your State / Territory To Continue.</FormErrorMessage>
+                        ) }
+                    </FormControl>
+
                     { !isStateTerritorySet ? (
-                        <></>
+                        <FormControl isInvalid={isPostalSet} padding={3}>
+                            <FormLabel>Postal Code</FormLabel>
+                            <Input value={postal} onChange={handlePostal} type='number' placeholder='Postal Code' />
+                            {!isPostalSet ? (
+                                <></>
+                            ):(
+                                <FormErrorMessage>Please Enter Postal Code To Continue.</FormErrorMessage>
+                            )}
+                        </FormControl>
                     ) : (
-                        <FormErrorMessage>Please Select Your State / Territory To Continue.</FormErrorMessage>
+                        <></>
                     ) }
-                </FormControl>
 
-                { !isStateTerritorySet ? (
-                    <FormControl isInvalid={isPostalSet} padding={3}>
-                        <FormLabel>Postal Code</FormLabel>
-                        <Input value={postal} onChange={handlePostal} type='number' placeholder='Postal Code' />
-                        {!isPostalSet ? (
+                    { !isPostalSet && postal.length === 4 ? (
+                        <FormControl isInvalid={isHouseNumberSet} padding={3}>
+                            <FormLabel>House Number</FormLabel>
+                            <Input value={houseNumber} onChange={handleHouseNumber} type='number' disabled={ notHaveHouseNumber ? true : false } placeholder='House Number' />
+                            {!isHouseNumberSet ? (
+                                <></>
+                            ):(
+                                <>
+                                    <FormErrorMessage visibility={ notHaveHouseNumber ? 'hidden' : 'visible' }>Please Enter House Number To Continue.</FormErrorMessage>
+                                    <FormControl marginTop={notHaveHouseNumber ? 0 : 5 } display='flex' alignItems='center'>
+                                        <FormLabel htmlFor='house-number-available' mb='0'>
+                                            Don't have house number?
+                                        </FormLabel>
+                                        <Switch onChange={handleHaveHouseNumber} id='house-number-available' />
+                                    </FormControl>
+                                </>
+                            )}
+                        </FormControl>
+                    ):(
+                        <></>
+                    ) }
+
+                    { !isPostalSet && postal.length === 4 && notHaveHouseNumber ? (
+                        <FormControl isInvalid={isLotNumberSet} padding={3}>
+                            <FormLabel>Lot Number</FormLabel>
+                            <Input value={lotNumber} onChange={handleLotNumber} type='text' placeholder='Lot Number' />
+                            {!isLotNumberSet ? (
+                                <></>
+                            ):(
+                                <>
+                                    <FormErrorMessage>Please Enter Lot Number To Continue.</FormErrorMessage>
+                                </>
+                            )}
+                        </FormControl>
+                    ):(
+                        <></>
+                    ) }
+
+                    {
+                        !isHouseNumberSet || !isLotNumberSet ? (
+                            dataAvailability ? (
+                                <FormControl isInvalid={isStreetName} padding={3}>
+                                    <Button onClick={() => checkDataAvailability()} colorScheme='teal' size='md'>
+                                        Check Data Availability
+                                    </Button>
+                                </FormControl>
+                            ) : (
+                                results.length == 0 ? (
+                                    <FormControl padding={3}>
+                                        <Spinner
+                                            thickness='4px'
+                                            speed='0.65s'
+                                            emptyColor='gray.200'
+                                            color='blue.500'
+                                            size='xl'
+                                        />
+                                    </FormControl>
+                                ) : (
+                                    <FormControl isInvalid={isCitySet} padding={3}>
+                                        <FormLabel>City</FormLabel>
+                                        <Input value={city} onChange={handleCity} type='text' placeholder='City' />
+                                        <ul>
+                                            {city.length > 1 ? (
+                                                uniqueCities.map((cityName, index) => (
+                                                    <Button marginTop={2} marginRight={2} key={index} size='xs' onClick={() => handleCitySet(cityName)} colorScheme='blue'>{cityName}</Button>
+                                                ))
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </ul>
+                                        {!isCitySet ? (
+                                            <></>
+                                        ):(
+                                            <FormErrorMessage>Please Enter City To Continue.</FormErrorMessage>
+                                        )}
+                                    </FormControl>
+                                ) 
+                            )
+                        ) : (
                             <></>
-                        ):(
-                            <FormErrorMessage>Please Enter Postal Code To Continue.</FormErrorMessage>
-                        )}
-                    </FormControl>
-                ) : (
-                    <></>
-                ) }
+                        )
+                    }
 
-                { !isPostalSet ? (
-                    <FormControl isInvalid={isHouseNumberSet} padding={3}>
-                        <FormLabel>House Number</FormLabel>
-                        <Input value={houseNumber} onChange={handleHouseNumber} type='number' placeholder='House Number' />
-                        {!isHouseNumberSet ? (
-                            <></>
-                        ):(
-                            <FormErrorMessage>Please Enter House Number To Continue.</FormErrorMessage>
-                        )}
-                    </FormControl>
-                ):(
-                    <></>
-                ) }
-
-                { results ? (
-                    <FormControl isInvalid={isCitySet} padding={3}>
-                        <FormLabel>City</FormLabel>
-                        <Select value={city} onChange={handleCity} placeholder='Select City'>
-                            {
-                                uniqueCities.map((item,i) => <option key={item.siteaddresscity} value={item.siteaddresscity}>{item.siteaddresscity}</option>)
-                            }
-                        </Select>
-                        {!isCitySet ? (
-                            <></>
-                        ):(
-                            <FormErrorMessage>Please Select City To Continue.</FormErrorMessage>
-                        )}
-                    </FormControl>
-                ) : (
-                    <FormControl padding={3}>
-                        <Spinner
-                            thickness='4px'
-                            speed='0.65s'
-                            emptyColor='gray.200'
-                            color='blue.500'
-                            size='xl'
-                        />
-                    </FormControl>
-                ) }
-
-                { !isCitySet ? (
-                    <FormControl isInvalid={isStreetName} padding={3}>
-                        <FormLabel>Street Name</FormLabel>
-                        <Select value={steetName} onChange={handleStreetName} placeholder='Select Street Name'>
-                            {
-                                uniqueStreets.map((item,i) => <option key={i} value={item.mirn}>{item.streetname}</option>)
-                            }
-                        </Select>
-                        {!isStreetName ? (
-                            <></>
-                        ):(
-                            <FormErrorMessage>Please Select Street Name To Get Your MIRN Id.</FormErrorMessage>
-                        )}
-                    </FormControl>
-                ) : (
-                    <></>
-                ) }
-
-                <h1>{steetName}</h1>
-
-            </form>
-        </Box>
+                    { !isCitySet && results.length != 0 ? (
+                        <FormControl isInvalid={isStreetName} padding={3}>
+                            <FormLabel>Street Name</FormLabel>
+                            <Input value={streetName} onChange={handleStreetName} type='text' placeholder='Street Name' />
+                            <ul>
+                                {streetName.length > 1 ? (
+                                    uniqueStreetForMirn.map((item, index) => (
+                                        <Button marginTop={2} marginRight={2} key={index} size='xs' onClick={() => handleStreetSet(item)} colorScheme='blue'>{item.streetname.toLowerCase()}</Button>
+                                    ))
+                                ) : (
+                                    <></>
+                                )}
+                            </ul>
+                            {!isStreetName ? (
+                                <></>
+                            ):(
+                                <FormErrorMessage>Please Enter Street Name To Get Your MIRN Id.</FormErrorMessage>
+                            )}
+                        </FormControl>
+                    ) : (
+                        <></>
+                    ) }
+                </form>
+            </Box>
+            <Modal isOpen={isOpen} size={'xl'} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                <ModalHeader>MIRN ID is {mirn}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <DataTable data={mirnSet}/>
+                </ModalBody>
+                <ModalFooter>
+                    <Button colorScheme='blue' mr={3} onClick={onClose}>
+                        Close
+                    </Button>
+                </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     )
   }
