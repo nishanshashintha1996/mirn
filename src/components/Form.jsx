@@ -3,13 +3,11 @@ import {
     FormControl,
     FormLabel,
     FormErrorMessage,
-    FormHelperText,
     Input,
     Box,
     Select,
     Button,
     Spinner,
-    Flex,
     Switch,
     Modal,
     ModalOverlay,
@@ -19,18 +17,14 @@ import {
     ModalBody,
     ModalCloseButton,
     useDisclosure,
-    Center,
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    TableContainer,
+    Link,
+    IconButton, 
+    useColorMode
 } from '@chakra-ui/react';
 import DataTable from './DataTable';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import NavBar from './NavBar';
 
 import {
     AutoComplete,
@@ -40,6 +34,8 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 
 export default function Form() {
+
+    const { colorMode, toggleColorMode } = useColorMode();
 
     const [results, setResults] = useState([]);
     const [uniqueCities, setUniqueCities] = useState([]);
@@ -203,8 +199,9 @@ export default function Form() {
 
     return (
         <>
-            <Box w='100%' p={10} color='white'>
-                <form>
+            <NavBar/>
+            <Box w='100%' p={10}>
+
                     <FormControl isInvalid={isStateTerritorySet} padding={3}>
                         <FormLabel>State / Territory</FormLabel>
                         <Select value={stateTerritory} onChange={handleStateTerritory} placeholder='Select State / Territory'>
@@ -344,7 +341,7 @@ export default function Form() {
                     ) : (
                         <></>
                     ) }
-                </form>
+                
             </Box>
             <Modal isOpen={isOpen} size={'xl'} onClose={onClose}>
                 <ModalOverlay />

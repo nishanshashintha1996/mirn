@@ -11,7 +11,6 @@ import {
     Button,
     useToast 
 } from '@chakra-ui/react';
-
 export default function Login( { setIsAuthenticated } ) {
 
     const [email, setEmail] = useState('');
@@ -25,9 +24,9 @@ export default function Login( { setIsAuthenticated } ) {
     const toast = useToast();
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(email=='nishanshashintha.live@gmail.com' && password =='live@1234'){
+        if(email=='g@dealexpert.com.au' && password =='3l3ctr1city!@#$%'){
             setIsAuthenticated(true);
-            navigate('/');
+            navigate('/searchform');
         }else{
             toast({
                 title: "Login Faild.",
